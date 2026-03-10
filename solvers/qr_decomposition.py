@@ -5,59 +5,39 @@ import numpy as np
 
 def qr_decomposition(A, b):
     """
-    Solves Ax = b via QR factorization A = Q @ R,
-    implemented entirely from scratch using Modified Gram-Schmidt orthogonalization.
+    Solves Ax = b via QR factorization using Householder reflections.
 
     Steps:
-      1. Modified Gram-Schmidt → Q (orthonormal), R (upper triangular)
-      2. Compute b_hat = Q.T @ b  (using explicit dot products)
-      3. Back substitution: R @ x = b_hat  →  x
+      1. Apply k Householder reflections H_1, ..., H_k to reduce A → R
+         (upper triangular), accumulating the same transforms on b → b_hat.
+         Each reflection H = I - 2*v*v^T zeros out the sub-diagonal of column j.
+         The sign of v is chosen to maximise |v[0]| and avoid cancellation.
+      2. Back substitution: R @ x = b_hat  →  x
     """
     k = len(b)
-    Q = np.zeros((k, k))
-    R = np.zeros((k, k))
+    R = A.astype(float).copy()
+    b_hat = b.astype(float).copy()
 
-    # ── Step 1: Modified Gram-Schmidt QR ─────────────────────────────────
-    # Work on columns of A
-    V = A.astype(float).copy()   # V[:,j] will be modified in place
-
+    # ── Step 1: Householder reflections ───────────────────────────────────
     for j in range(k):
-        # R[j,j] = ||v_j||
-        norm = 0.0
-        for i in range(k):
-            norm += V[i, j] ** 2
-        R[j, j] = norm ** 0.5
+        x = R[j:, j].copy()
 
-        # Q[:,j] = v_j / ||v_j||
-        for i in range(k):
-            Q[i, j] = V[i, j] / R[j, j]
+        # v = x + sign(x[0]) * ||x|| * e1  (sign chosen to avoid cancellation)
+        sign = 1.0 if x[0] >= 0.0 else -1.0
+        x[0] += sign * np.sqrt(x @ x)
+        norm_v = np.sqrt(x @ x)
+        if norm_v == 0.0:
+            continue
+        v = x / norm_v   # unit Householder vector
 
-        # Subtract projection from all subsequent columns (modified GS)
-        for l in range(j + 1, k):
-            # R[j,l] = Q[:,j] . V[:,l]
-            dot = 0.0
-            for i in range(k):
-                dot += Q[i, j] * V[i, l]
-            R[j, l] = dot
-            # V[:,l] -= R[j,l] * Q[:,j]
-            for i in range(k):
-                V[i, l] -= R[j, l] * Q[i, j]
+        # Apply H = I - 2*v*v^T to the active submatrix and to b_hat
+        R[j:, j:] -= 2.0 * np.outer(v, v @ R[j:, j:])
+        b_hat[j:] -= 2.0 * v * (v @ b_hat[j:])
 
-    # ── Step 2: b_hat = Q.T @ b ───────────────────────────────────────────
-    b_hat = np.zeros(k)
-    for i in range(k):
-        s = 0.0
-        for r in range(k):
-            s += Q[r, i] * b[r]   # Q.T[i,r] = Q[r,i]
-        b_hat[i] = s
-
-    # ── Step 3: Back substitution  R @ x = b_hat ─────────────────────────
+    # ── Step 2: Back substitution  R @ x = b_hat ─────────────────────────
     x = np.zeros(k)
     for i in range(k - 1, -1, -1):
-        s = b_hat[i]
-        for p in range(i + 1, k):
-            s -= R[i, p] * x[p]
-        x[i] = s / R[i, i]
+        x[i] = (b_hat[i] - R[i, i + 1:] @ x[i + 1:]) / R[i, i]
 
-    res = float(np.sqrt(sum((A[i, :] @ x - b[i]) ** 2 for i in range(k))))
+    res = float(np.sqrt(np.sum((A @ x - b) ** 2)))
     return x, res
