@@ -1,0 +1,108 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{souce}  
+\usepackage{setspace}
+\usepackage{enumitem} 
+\usepackage{booktabs,longtable,threeparttable,siunitx,tabularx,makecell}
+
+% \usepackage{TimeNewRoman}
+% \usepackage{newtxtext,newtxmath}
+% \renewcommand{\rmdefault}{ptm}
+% \renewcommand{\sfdefault}{phv}
+% \renewcommand{\ttdefault}{pcr}
+
+\graphicspath{{figures/}}
+
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\chapter}{\clearpage}{}{}{}
+\makeatother
+
+\usepackage{pdfpages} 
+\usepackage{pdflscape,rotating} 
+\usepackage{adjustbox}
+
+\usepackage[style=apa, backend=biber]{biblatex}
+\usepackage{csquotes}
+\addbibresource{reference.bib}  
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+\usepackage{float}
+\usepackage{ragged2e}
+\author{
+	Franniel Luigi Hilario 
+}
+
+
+\begin{document}
+\emergencystretch 3em 
+\sloppy			
+\onehalfspacing
+
+\begin{titlepage}
+	\pagenumbering{gobble}
+	\centering % Set the line spacing to 1 for the title page.
+
+	\begin{minipage}[c][3\baselineskip][c]{0.9\linewidth}
+		\centering\bfseries\large\MakeUppercase{
+			On the Perforamance of Linear System Solvers in Alternating Least Squares for Collaborative Filtering
+		}
+	\end{minipage}
+
+	\vspace{0.5in}
+	{\centering Franniel Luigi Hilario \quad Brian Gabriel Magbanua  \quad Fiona Ventura\\ Jermaine Pasamba \quad Mark Oliver Medina  }
+
+	\vspace{0.5in}
+
+	{
+		College of Science, Bachelor of Science in Mathematics
+		With Specialization in Computer Science,
+		Bulacan State University, Malolos, Bulacan
+	}
+
+	\vspace{1in}
+	\begin{abstract}
+		\begin{justify}
+
+			Todo
+
+		\end{justify}
+	\end{abstract}
+\end{titlepage}
+\pagenumbering{arabic}
+\chapter*{Introduction}
+
+Recommender systems have become an essential component of modern information platforms which assist users to find relevant content in environments that contain extensive item collections and users who have restricted viewing time. The system uses past user behavior data to identify user preferences which it uses to generate customized content suggestions for e-commerce platforms and streaming services and social media networks \parencite{ricci2015recommender}. Collaborative filtering stands out among recommendation methods because it can successfully identify user preferences based on user-item interaction patterns which it derives from data analysis without needing direct item attribute knowledge \parencite{koren2009matrix}.
+
+The Netflix Prize competition created a key development for collaborative filtering by pushing researchers to build recommendation systems which could handle large datasets while providing precise predictions. Matrix factorization emerged as the leading framework from this era because it uses a user-item rating matrix which requires two low-rank latent factor matrices to create user preference and item characteristic representations \parencite{koren2009matrix,takacs2009scalable}. The system uses this formulation to reveal hidden patterns between users and items while handling computational demands of extensive datasets.
+
+The matrix factorization computation field has made Alternating Least Squares (ALS) into a common method because of its basic operation design which delivers strong results and works well with parallel processing. The ALS method breaks down its optimization task into two parts which need to change user and item latent factor matrices. The algorithm needs numerical linear algebra routines to deliver both computational efficiency and stability because the update process needs to solve multiple regularized least-squares problems \parencite{zhou2008large}.
+
+
+The existing body of research on recommender systems has received extensive coverage, yet most investigations concentrate on developing model architectures and implementing regularization techniques and building feature engineering systems. The numerical methods which apply to ALS least-squares subproblem resolution have received less research attention when compared to model architecture and regularization methods and feature engineering systems. Subproblems can use multiple linear algebra methods for solving which include explicit matrix inversion and direct factorization methods and iterative solvers.
+
+The numerical linear algebra field treats these two options as different solutions. The traditional results demonstrate that explicit matrix inversion method operates at lower numerical stability which decreases its efficiency compared to linear system solving through factorization methods which include QR or Cholesky decomposition \parencite{trefethen1997numerical, golub2013matrix}. The solver selection process affects both computational speed and the ability to reach a solution while maintaining system stability.
+
+Small-to-medium benchmark datasets such as the MovieLens 100K dataset create a perfect testing ground to study these performance differences. The dataset enables controlled research which shows how solver selection affects outcomes because it is widely used and requires low computational power while all model components remain unchanged. The study of solver-level operations at this location delivers important findings which help both educational functions and actual implementations of recommender system operations.
+
+\vspace{4em}
+
+\chapter*{Preliminaries}
+
+\vspace{4em}
+
+\chapter*{Methods and Applications}
+
+\vspace{4em}
+
+\chapter*{Analysis and Results}
+
+\vspace{4em}
+
+\chapter*{Conclusion}
+\newpage
+\printbibliography[heading=bibintoc,title={REFERENCES}] 
+\end{document}
